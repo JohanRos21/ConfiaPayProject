@@ -10,7 +10,8 @@ export const crearTransaccion = async (req, res) => {
       monto,
       descripcion,
       tipo,
-      comprobante
+      comprobante,
+      tienda: req.user.tienda,
     });
 
     await nueva.save();
@@ -24,7 +25,20 @@ export const crearTransaccion = async (req, res) => {
 // Obtener todas las transacciones del usuario logueado
 export const obtenerTransacciones = async (req, res) => {
   try {
-    const transacciones = await Transaction.find({ user: req.user.id }).sort({ createdAt: -1 });
+    let transacciones;
+
+    if (req.user.role === "dueño") {
+      // 🔹 Solo las transacciones de su tienda
+      transacciones = await Transaction.find({ tienda: req.user.tienda })
+        .populate("user", "name email role tienda")
+        .sort({ createdAt: -1 });
+    } else {
+      // 🔹 Vendedor o cliente: solo las suyas
+      transacciones = await Transaction.find({ user: req.user.id })
+        .populate("user", "name email role tienda")
+        .sort({ createdAt: -1 });
+    }
+
     res.json(transacciones);
   } catch (error) {
     console.error("❌ Error al obtener transacciones:", error);
