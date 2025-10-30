@@ -1,5 +1,4 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -8,22 +7,27 @@ export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("cliente");
+  const [tienda, setTienda] = useState(""); // 🔹 nuevo campo
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("📦 Enviando registro con rol:", role);
+    console.log("📦 Enviando registro con rol:", role, "y tienda:", tienda);
+
     try {
       await axios.post("http://localhost:5000/api/auth/register", {
         name,
         email,
         password,
         role,
+        tienda, // 🔹 se envía al backend
       });
+
       alert("Registro exitoso ✅");
       navigate("/");
     } catch (error) {
-      alert("Error al registrar ❌");
+      console.error("❌ Error al registrar:", error.response?.data || error);
+      alert(error.response?.data?.message || "Error al registrar ❌");
     }
   };
 
@@ -37,6 +41,7 @@ export default function Register() {
           Crear cuenta
         </h2>
 
+        {/* Nombre */}
         <input
           type="text"
           placeholder="Nombre completo"
@@ -46,6 +51,7 @@ export default function Register() {
           required
         />
 
+        {/* Email */}
         <input
           type="email"
           placeholder="Correo electrónico"
@@ -55,6 +61,7 @@ export default function Register() {
           required
         />
 
+        {/* Password */}
         <input
           type="password"
           placeholder="Contraseña"
@@ -64,6 +71,7 @@ export default function Register() {
           required
         />
 
+        {/* Rol */}
         <select
           value={role}
           onChange={(e) => setRole(e.target.value)}
@@ -74,6 +82,19 @@ export default function Register() {
           <option value="dueño">Dueño</option>
         </select>
 
+        {/* Tienda (solo si es dueño o vendedor) */}
+        {(role === "vendedor" || role === "dueño") && (
+          <input
+            type="text"
+            placeholder="Nombre de la tienda o empresa"
+            value={tienda}
+            onChange={(e) => setTienda(e.target.value)}
+            className="w-full p-3 mb-4 border rounded-lg focus:outline-green-500"
+            required
+          />
+        )}
+
+        {/* Botón */}
         <button
           type="submit"
           className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition"

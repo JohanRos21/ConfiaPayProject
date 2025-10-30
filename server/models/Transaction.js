@@ -7,6 +7,7 @@ const transactionSchema = new mongoose.Schema(
     descripcion: { type: String },
     tipo: { type: String, enum: ["ingreso", "egreso"], default: "ingreso" },
     comprobante: { type: String }, // puede ser URL o texto
+    tienda: { type: String, required: true },
   },
   { timestamps: true }
 );

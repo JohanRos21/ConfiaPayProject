@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password, role } = req.body; // 👈 agregamos role
+    const { name, email, password, role,tienda } = req.body; // 👈 agregamos role
     const userExistente = await User.findOne({ email });
     if (userExistente) return res.status(400).json({ message: "El usuario ya existe" });
 
@@ -14,6 +14,7 @@ export const registerUser = async (req, res) => {
       email,
       password: hashed,
       role: role || "cliente", // 👈 guarda el rol enviado o cliente por defecto
+      tienda: tienda || null,
     });
 
     await nuevoUsuario.save();
@@ -26,16 +27,41 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const usuario = await User.findOne({ email });
-    if (!usuario) return res.status(400).json({ message: "Usuario no encontrado" });
+    const user = await User.findOne({ email }); // ✅ cambiamos a user
 
-    const isMatch = await bcrypt.compare(password, usuario.password);
-    if (!isMatch) return res.status(400).json({ message: "Contraseña incorrecta" });
+    if (!user) {
+      return res.status(400).json({ message: "Usuario no encontrado" });
+    }
 
-    const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.json({ token, user: usuario });
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Contraseña incorrecta" });
+    }
+
+    // ✅ incluir la tienda y rol en el token
+    const token = jwt.sign(
+      {
+        id: user._id,
+        role: user.role,
+        tienda: user.tienda,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    // ✅ devolver token + datos del usuario
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        tienda: user.tienda,
+      },
+    });
   } catch (error) {
-    console.error(error);
+    console.error("❌ Error al iniciar sesión:", error);
     res.status(500).json({ message: "Error al iniciar sesión" });
   }
 };

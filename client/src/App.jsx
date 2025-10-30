@@ -8,6 +8,7 @@ import ValidatePayment from "./pages/ValidatePayment";
 import Register from "./pages/Register";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import VendedorTransaccion from "./pages/VendedorTransaccion";
 
 import "./styles/global.css";
 
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/validate" element={<ValidatePayment />} />
             <Route path="/trustscore" element={<TrustScore />} />
             <Route path="/adminpanel" element={<AdminPanel />} />
+            <Route path="/vendedor" element={<VendedorTransaccion />} />
           </Routes>
         </main>
         <Footer />
