@@ -1,7 +1,8 @@
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Lock, Mail } from "lucide-react";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -9,65 +10,81 @@ export default function Login() {
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  console.log("Intentando iniciar sesión con:", email, password);
+    e.preventDefault();
+    try {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
+        email,
+        password,
+      });
 
-  try {
-    const res = await axios.post("http://localhost:5000/api/auth/login", {
-      email,
-      password,
-    });
-    console.log("✅ Respuesta del servidor:", res.data);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
 
-    localStorage.setItem("token", res.data.token);
-    localStorage.setItem("user", JSON.stringify(res.data.user));
-
-    alert("Inicio de sesión exitoso ✅");
-    navigate("/dashboard");
-  } catch (error) {
-    console.error("❌ Error al iniciar sesión:", error);
-    alert("Error al iniciar sesión. Revisa la consola.");
-  }
-};
+      alert("Bienvenido a ConfiaPay 💳");
+      navigate("/dashboard");
+    } catch (error) {
+      alert("Credenciales incorrectas ❌");
+    }
+  };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-100 to-blue-300">
-      <form
-        onSubmit={handleLogin}
-        className="bg-white p-8 rounded-2xl shadow-lg w-96"
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-green-200 via-blue-100 to-blue-300 backdrop-blur-md">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-2xl w-[380px] text-center"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-blue-700">
-          ConfiaPay
-        </h2>
-        <input
-          type="email"
-          placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg focus:outline-blue-500"
-          required
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg focus:outline-blue-500"
-          required
-        />
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition">
-          Ingresar
-        </button>
-        <p className="text-center text-sm mt-4">
-          ¿No tienes cuenta?{" "}
-          <span
-            className="text-blue-600 cursor-pointer"
-            onClick={() => navigate("/register")}
-          >
-            Regístrate aquí
-          </span>
+        <h1 className="text-3xl font-bold mb-6 text-green-700 tracking-wide">
+          🔒 ConfiaPay
+        </h1>
+        <p className="text-gray-600 mb-8">
+          Inicia sesión en tu cuenta para continuar
         </p>
-      </form>
+
+        <form onSubmit={handleLogin}>
+          <div className="mb-5 relative">
+            <Mail className="absolute left-3 top-3 text-gray-500" size={20} />
+            <input
+              type="email"
+              placeholder="Correo electrónico"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full p-3 pl-10 border border-gray-300 rounded-xl focus:outline-green-500"
+              required
+            />
+          </div>
+
+          <div className="mb-6 relative">
+            <Lock className="absolute left-3 top-3 text-gray-500" size={20} />
+            <input
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 pl-10 border border-gray-300 rounded-xl focus:outline-green-500"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-xl font-semibold shadow-md transition"
+          >
+            Iniciar sesión
+          </button>
+        </form>
+
+        <p className="mt-6 text-gray-600">
+          ¿No tienes cuenta?{" "}
+          <Link
+            to="/register"
+            className="text-green-700 font-semibold hover:underline"
+          >
+            Regístrate
+          </Link>
+        </p>
+      </motion.div>
     </div>
   );
 }

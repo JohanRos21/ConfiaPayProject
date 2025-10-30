@@ -1,0 +1,1 @@
+@tailwind base;@tailwind components;@tailwind utilities;body{@apply bg-gradient-to-br from-green-200 via-blue-100 to-blue-300;font-family:Inter,sans-serif}
