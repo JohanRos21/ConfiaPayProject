@@ -1,13 +1,20 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
+  // ✅ Si ya hay sesión, redirige automáticamente al dashboard
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) navigate("/dashboard");
+  }, [navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -20,10 +27,10 @@ export default function Login() {
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      alert("Bienvenido a ConfiaPay 💳");
+      toast.success("Bienvenido a ConfiaPay 💳");
       navigate("/dashboard");
     } catch (error) {
-      alert("Credenciales incorrectas ❌");
+      toast.error("Credenciales incorrectas ❌");
     }
   };
 

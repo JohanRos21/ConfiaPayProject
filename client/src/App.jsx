@@ -1,4 +1,5 @@
 import React from "react";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -21,11 +22,11 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/validate" element={<ValidatePayment />} />
-            <Route path="/trustscore" element={<TrustScore />} />
-            <Route path="/adminpanel" element={<AdminPanel />} />
-            <Route path="/vendedor" element={<VendedorTransaccion />} />
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/validate" element={<ProtectedRoute><ValidatePayment /></ProtectedRoute>} />
+            <Route path="/trustscore" element={<ProtectedRoute><TrustScore /></ProtectedRoute>} />
+            <Route path="/adminpanel" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
+            <Route path="/vendedor" element={<ProtectedRoute><VendedorTransaccion /></ProtectedRoute>} />
           </Routes>
         </main>
         <Footer />
