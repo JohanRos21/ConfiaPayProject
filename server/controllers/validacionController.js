@@ -40,3 +40,14 @@ export const subirComprobante = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+export const obtenerValidaciones = async (req, res) => {
+  try {
+    const validaciones = await Validacion.find()
+      .populate("vendedorId", "name email tienda role") // 👈 agrega esta línea
+      .sort({ creadoEn: -1 });
+
+    res.json(validaciones);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

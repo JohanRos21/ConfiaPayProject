@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios";
+import toast from "react-hot-toast";
 export default function ValidatePayment() {
   const [archivo, setArchivo] = useState(null);
   const [monto, setMonto] = useState("");
@@ -28,7 +29,14 @@ export default function ValidatePayment() {
     } catch (err) {
       console.error("Error al validar comprobante:", err.response?.data || err.message);
       alert(err.response?.data?.message || "Error al validar comprobante");
+
     }
+    if (res.data.validacion.resultado === "valido")
+  toast.success("✅ Comprobante válido");
+else if (res.data.validacion.resultado === "sospechoso")
+  toast("⚠️ Comprobante sospechoso, revisa los datos");
+else
+  toast.error("❌ Comprobante inválido o alterado");
   };
 
   return (

@@ -18,7 +18,8 @@ export const verificarToken = async (req, res, next) => {
     req.user = {
       id: usuario._id,
       role: usuario.role,
-      tienda: usuario.tienda, // ✅ AGREGAR ESTO
+      tienda: usuario.tienda,
+      tiendaId: usuario.tiendaId || null, // ✅ AGREGAR ESTO
       email: usuario.email,
       name: usuario.name,
     };
