@@ -11,6 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { Link } from "react-router-dom";
 export default function Dashboard() {
   const [transactions, setTransactions] = useState([]);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -62,6 +63,12 @@ function VendedorView() {
           >
             Registrar nueva transacción
           </a>
+          <Link
+          to="/validate"
+          className="inline-block mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+          Validar comprobante
+        </Link>
           
     </div>
 );
