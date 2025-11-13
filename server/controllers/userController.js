@@ -1,6 +1,6 @@
 // server/controllers/userController.js
 import User from "../models/User.js";
-import Tienda from "../models/Tiendatem.js";
+import Tienda from "../models/Tienda.js";
 import bcrypt from "bcryptjs";
 
 // ✅ Registrar un vendedor nuevo (solo para dueños)
