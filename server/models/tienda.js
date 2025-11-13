@@ -9,3 +9,4 @@ const tiendaSchema = new mongoose.Schema({
 });
 
 export default mongoose.models.Tienda || mongoose.model("Tienda", tiendaSchema);
+
