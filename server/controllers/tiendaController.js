@@ -1,5 +1,5 @@
 // server/controllers/tiendaController.js
-import Tienda from "../models/Tienda.js";
+import Tienda from "../models/Tiendatem.js";
 
 export const crearTienda = async (req, res) => {
   try {
