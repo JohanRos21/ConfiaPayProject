@@ -12,22 +12,53 @@ import tiendaRoutes from "./routes/tiendasRoutes.js";
 dotenv.config();
 const app = express();
 
-// Middlewares
-app.use(express.json());
-app.use(cors());
+// ===== CORS CONFIG (IMPORTANTE PARA VERCEL + RENDER) =====
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",       // desarrollo local
+      "https://confia-payproject.vercel.app/", // tu dominio Vercel real → cambiarlo cuando Vercel te genere el dominio final
+      "*",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
+// ===== Middlewares =====
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 
+// ===== Conectar BD =====
+connectDB()
+  .then(() => console.log("📌 MongoDB conectado correctamente"))
+  .catch((err) => console.error("❌ Error al conectar la BD:", err));
 
-// Conexión BD
-connectDB();
+// ===== Rutas =====
+app.get("/", (req, res) => {
+  res.send("ConfiaPay Backend funcionando correctamente 🚀");
+});
 
-// Rutas
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/validacion", validacionRoutes);
 app.use("/api/usuarios", userRoutes);
 app.use("/api/tiendas", tiendaRoutes);
 
-// Puerto
+// ===== Manejo de Rutas No Encontradas =====
+app.use((req, res) => {
+  res.status(404).json({ error: "Ruta no encontrada" });
+});
+
+// ===== Manejo Global de Errores =====
+app.use((error, req, res, next) => {
+  console.error("❌ Error interno:", error);
+  res.status(500).json({ error: "Error interno del servidor" });
+});
+
+// ===== Puerto dinámico para Render =====
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Servidor backend corriendo en puerto ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`🔥 Servidor backend corriendo en puerto ${PORT}`)
+);
