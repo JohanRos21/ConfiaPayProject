@@ -12,7 +12,7 @@ export default function TiendasList() {
   // 🧠 Obtener las tiendas del dueño
   const obtenerTiendas = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/tiendas/mis-tiendas", {
+      const res = await axios.get("/api/tiendas/mis-tiendas", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTiendas(res.data);
@@ -27,7 +27,7 @@ export default function TiendasList() {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:5000/api/tiendas/crear",
+        "/api/tiendas/crear",
         { nombre, direccion },
         { headers: { Authorization: `Bearer ${token}` } }
       );

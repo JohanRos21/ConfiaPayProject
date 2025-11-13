@@ -18,7 +18,7 @@ export default function ValidatePayment() {
     const token = localStorage.getItem("token"); // ✅ obtenemos el token
 
     try {
-      const res = await axios.post("http://localhost:5000/api/validacion/subir", formData, {
+      const res = await axios.post("/api/validacion/subir", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`, // ✅ enviamos el token

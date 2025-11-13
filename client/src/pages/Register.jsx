@@ -15,7 +15,7 @@ export default function Register() {
     console.log("📦 Enviando registro con rol:", role, "y tienda:", tienda);
 
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
+      await axios.post("/api/auth/register", {
         name,
         email,
         password,

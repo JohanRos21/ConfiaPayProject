@@ -11,7 +11,7 @@ export default function VendedoresPorTienda() {
 
   const cargarVendedores = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/usuarios/vendedores/${tiendaId}`, {
+      const res = await axios.get(`/api/usuarios/vendedores/${tiendaId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setVendedores(res.data);
@@ -25,7 +25,7 @@ export default function VendedoresPorTienda() {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:5000/api/usuarios/registrar-vendedor",
+        "/api/usuarios/registrar-vendedor",
         { ...nuevo, tiendaId },
         { headers: { Authorization: `Bearer ${token}` } }
       );

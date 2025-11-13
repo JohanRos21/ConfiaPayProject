@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Link } from "react-router-dom";
+const API = import.meta.env.VITE_API_URL;
 export default function Dashboard() {
   const [transactions, setTransactions] = useState([]);
   const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -20,7 +21,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("http://localhost:5000/api/transactions", {
+        const res = await axios.get("/api/transactions", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTransactions(res.data);

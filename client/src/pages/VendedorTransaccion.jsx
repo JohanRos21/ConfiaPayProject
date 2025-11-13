@@ -15,7 +15,7 @@ export default function VendedorTransaccion() {
       const token = localStorage.getItem("token");
 
       const res = await axios.post(
-        "http://localhost:5000/api/transactions",
+        "/api/transactions",
         {
           monto,
           descripcion,

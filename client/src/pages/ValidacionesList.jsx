@@ -7,7 +7,7 @@ export default function ValidacionesList() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     axios
-      .get("http://localhost:5000/api/validacion/todas", {
+      .get("/api/validacion/todas", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setValidaciones(res.data))
