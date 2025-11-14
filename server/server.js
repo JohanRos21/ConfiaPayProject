@@ -12,16 +12,19 @@ import tiendaRoutes from "./routes/tiendasRoutes.js";
 dotenv.config();
 const app = express();
 
+app.options("*", cors());
 // ===== CORS CONFIG (IMPORTANTE PARA VERCEL + RENDER) =====
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://confia-payproject.vercel.app",  // 👈 TU FRONTEND EN PRODUCCIÓN
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",       // desarrollo local
-      "https://confia-payproject.vercel.app/", // tu dominio Vercel real → cambiarlo cuando Vercel te genere el dominio final
-      "*",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: allowedOrigins,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
