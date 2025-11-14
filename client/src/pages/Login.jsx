@@ -9,9 +9,9 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-console.log("ENV PRODUCTION:", import.meta.env.VITE_API_URL);
 
-  // ✅ Si ya hay sesión, redirige automáticamente al dashboard
+  console.log("ENV PRODUCTION:", import.meta.env.VITE_API_URL);
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) navigate("/dashboard");
@@ -19,6 +19,7 @@ console.log("ENV PRODUCTION:", import.meta.env.VITE_API_URL);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
       const res = await axiosClient.post("/api/auth/login", {
         email,
@@ -30,7 +31,9 @@ console.log("ENV PRODUCTION:", import.meta.env.VITE_API_URL);
 
       toast.success("Bienvenido a ConfiaPay 💳");
       navigate("/dashboard");
+
     } catch (error) {
+      console.error("❌ Error login:", error.response?.data || error);
       toast.error("Credenciales incorrectas ❌");
     }
   };
@@ -96,4 +99,3 @@ console.log("ENV PRODUCTION:", import.meta.env.VITE_API_URL);
     </div>
   );
 }
-
