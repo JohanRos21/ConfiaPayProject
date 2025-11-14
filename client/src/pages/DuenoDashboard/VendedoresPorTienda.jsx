@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import React,{ useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 import toast from "react-hot-toast";
 
 export default function VendedoresPorTienda() {
@@ -11,7 +11,7 @@ export default function VendedoresPorTienda() {
 
   const cargarVendedores = async () => {
     try {
-      const res = await axios.get(`/api/usuarios/vendedores/${tiendaId}`, {
+      const res = await axiosClient.get(`/api/usuarios/vendedores/${tiendaId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setVendedores(res.data);
@@ -24,7 +24,7 @@ export default function VendedoresPorTienda() {
   const registrarVendedor = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(
+      await aaxiosClient.post(
         "/api/usuarios/registrar-vendedor",
         { ...nuevo, tiendaId },
         { headers: { Authorization: `Bearer ${token}` } }

@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 import toast from "react-hot-toast";
 export default function ValidatePayment() {
   const [archivo, setArchivo] = useState(null);
@@ -18,7 +18,7 @@ export default function ValidatePayment() {
     const token = localStorage.getItem("token"); // ✅ obtenemos el token
 
     try {
-      const res = await axios.post("/api/validacion/subir", formData, {
+      const res = await axiosClient.post("/api/validacion/subir", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "Authorization": `Bearer ${token}`, // ✅ enviamos el token

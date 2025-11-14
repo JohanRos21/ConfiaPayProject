@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 export default function VendedorTransaccion() {
   const [monto, setMonto] = useState("");
@@ -14,7 +14,7 @@ export default function VendedorTransaccion() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.post(
+      const res = await axiosClient.post(
         "/api/transactions",
         {
           monto,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 import { useNavigate } from "react-router-dom";
 
 export default function Register() {
@@ -15,7 +15,7 @@ export default function Register() {
     console.log("📦 Enviando registro con rol:", role, "y tienda:", tienda);
 
     try {
-      await axios.post("/api/auth/register", {
+      const res = await axiosClient.post("/api/auth/register", {
         name,
         email,
         password,

@@ -1,5 +1,5 @@
 import React,{ useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 import toast from "react-hot-toast";
 
 export default function TiendasList() {
@@ -12,7 +12,7 @@ export default function TiendasList() {
   // 🧠 Obtener las tiendas del dueño
   const obtenerTiendas = async () => {
     try {
-      const res = await axios.get("/api/tiendas/mis-tiendas", {
+      const res = await axiosClient.get("/api/tiendas/mis-tiendas", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTiendas(res.data);

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 
 export default function ValidacionesList() {
   const [validaciones, setValidaciones] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    axios
+    axiosClient
       .get("/api/validacion/todas", {
         headers: { Authorization: `Bearer ${token}` },
       })

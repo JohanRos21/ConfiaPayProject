@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 import {
   ComposedChart,
   Bar,
@@ -21,7 +21,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("/api/transactions", {
+        const res = await axiosClient.get("/api/transactions", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTransactions(res.data);

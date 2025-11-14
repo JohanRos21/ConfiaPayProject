@@ -1,5 +1,5 @@
 import React, { useState,useEffect } from "react";
-import axios from "axios";
+import axiosClient from "../api/axiosClient";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail } from "lucide-react";
@@ -9,6 +9,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+console.log("ENV PRODUCTION:", import.meta.env.VITE_API_URL);
 
   // ✅ Si ya hay sesión, redirige automáticamente al dashboard
   useEffect(() => {
@@ -19,7 +20,7 @@ export default function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/api/auth/login", datos, {
+      const res = await axiosClient.post("/api/auth/login", {
         email,
         password,
       });
