@@ -1,6 +1,6 @@
 import React from "react";
 export default function TrustScore() {
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const { user } = useAuth();
   const score = Math.floor(Math.random() * 40) + 60; // ejemplo aleatorio
 
   return (

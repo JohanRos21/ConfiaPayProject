@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axiosClient from "../api/axiosClient";
+import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 export default function VendedorTransaccion() {
+  const { user } = useAuth();
   const [monto, setMonto] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [tipo, setTipo] = useState("ingreso");
@@ -12,29 +15,22 @@ export default function VendedorTransaccion() {
     setMensaje("");
 
     try {
-      const token = localStorage.getItem("token");
+      const res = await axiosClient.post("/api/transactions", {
+        monto,
+        descripcion,
+        tipo,
+        comprobante: "voucher_demo.png",
+        tienda: user.tienda,
+        sucursal: user.sucursal,   // ← AGREGAR ESTO
+      });
 
-      const res = await axiosClient.post(
-        "/api/transactions",
-        {
-          monto,
-          descripcion,
-          tipo,
-          comprobante: "voucher_demo.png", // placeholder temporal
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-
-      setMensaje("✅ Transacción registrada correctamente");
-      console.log("Transacción registrada:", res.data);
+      toast.success("Transacción registrada correctamente");
       setMonto("");
       setDescripcion("");
       setTipo("ingreso");
     } catch (error) {
-      console.error("❌ Error al registrar:", error);
-      setMensaje("❌ Error al registrar transacción");
+      console.error("❌ Error al registrar:", error.response?.data || error);
+      toast.error("Error al registrar la transacción");
     }
   };
 

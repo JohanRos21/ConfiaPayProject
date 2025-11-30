@@ -1,18 +1,32 @@
 import React from "react";
-import ProtectedRoute from "./components/ProtectedRoute";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./components/ProtectedRoute";
+
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import TrustScore from "./pages/TrustScore";
-import AdminPanel from "./pages/AdminPanel";
-import ValidatePayment from "./pages/ValidatePayment";
 import Register from "./pages/Register";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Dashboard from "./pages/DuenoDashboard/Dashboard";
+
+import ValidatePayment from "./pages/ValidatePayment";
+import TrustScore from "./pages/TrustScore";
 import VendedorTransaccion from "./pages/VendedorTransaccion";
 import ValidacionesList from "./pages/ValidacionesList";
-import TiendasList from "./pages/DuenoDashboard/TiendasList";
-import VendedoresPorTienda from "./pages/DuenoDashboard/VendedoresPorTienda";
+import ReportePages from "./pages/ReportePages"; 
+
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
+
+import ListaSucursales from "./pages/DuenoDashboard/ListaSucursales";
+import CrearSucursal from "./pages/DuenoDashboard/CrearSucursal";
+
+import AdminsPorSucursal from "./pages/DuenoDashboard/AdminsPorSucursal";
+import CrearAdminSucursal from "./pages/DuenoDashboard/CrearAdminSucursal";
+
+import VendedoresPorSucursal from "./pages/DuenoDashboard/VendedoresPorSucursal";
+import CrearVendedorSucursal from "./pages/DuenoDashboard/CrearVendedorSucursal";
+
+import SucursalesDashboard from "./pages/DuenoDashboard/SucursalesDashBoard";
+
+import OwnerRegister from "./pages/OwnerRegister";
 
 import "./styles/global.css";
 
@@ -21,20 +35,103 @@ export default function App() {
     <BrowserRouter>
       <div className="min-h-screen flex flex-col">
         <Navbar />
+
         <main className="flex-grow bg-gray-50">
           <Routes>
+
+            {/* Público */}
             <Route path="/" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/validate" element={<ProtectedRoute><ValidatePayment /></ProtectedRoute>} />
-            <Route path="/trustscore" element={<ProtectedRoute><TrustScore /></ProtectedRoute>} />
-            <Route path="/adminpanel" element={<ProtectedRoute><AdminPanel /></ProtectedRoute>} />
-            <Route path="/vendedor" element={<ProtectedRoute><VendedorTransaccion /></ProtectedRoute>} />
-            <Route path="/validaciones" element={<ProtectedRoute><ValidacionesList /></ProtectedRoute>} />
-           <Route path="/tiendas" element={<ProtectedRoute><TiendasList /></ProtectedRoute>}/>
-           <Route path="/vendedores/:tiendaId"element={<ProtectedRoute><VendedoresPorTienda /></ProtectedRoute>} />
+            <Route path="/register-owner" element={<OwnerRegister />} />
+            
+            {/* Dashboard general */}
+            <Route
+              path="/dashboard"
+              element={<ProtectedRoute><Dashboard /></ProtectedRoute>}
+            />
+
+            {/* Validación de pago / trustscore */}
+            <Route
+              path="/validate"
+              element={<ProtectedRoute><ValidatePayment /></ProtectedRoute>}
+            />
+            <Route
+              path="/trustscore"
+              element={<ProtectedRoute><TrustScore /></ProtectedRoute>}
+            />
+
+            {/* Módulo Vendedor */}
+            <Route
+              path="/vendedor"
+              element={<ProtectedRoute roles={["vendedor"]}><VendedorTransaccion /></ProtectedRoute>}
+            />
+
+            {/* Validaciones administrativas */}
+            <Route
+              path="/validaciones"
+              element={<ProtectedRoute roles={["dueño", "admin"]}><ValidacionesList /></ProtectedRoute>}
+            />
+    {/*Reportes vista dueño admin*/}
+            <Route
+              path="/reportes"
+            element={
+           <ProtectedRoute roles={["dueño", "admin"]}>
+           <ReportePages />
+         </ProtectedRoute>
+         }
+       />
+
+            {/* =======================
+                MÓDULO SUCURSALES (solo dueño)
+               ======================= */}
+
+            {/* Lista de sucursales */}
+            <Route
+              path="/dashboard/sucursales"
+              element={<ProtectedRoute roles={["dueño"]}><ListaSucursales /></ProtectedRoute>}
+            />
+
+            {/* Crear sucursal */}
+            <Route
+              path="/dashboard/sucursales/crear"
+              element={<ProtectedRoute roles={["dueño"]}><CrearSucursal /></ProtectedRoute>}
+            />
+
+            {/* Admins por sucursal */}
+            <Route
+              path="/dashboard/sucursales/:id/admins"
+              element={<ProtectedRoute roles={["dueño"]}><AdminsPorSucursal /></ProtectedRoute>}
+            />
+
+            {/* Crear admin por sucursal */}
+            <Route
+              path="/dashboard/sucursales/:id/crear-admin"
+              element={<ProtectedRoute roles={["dueño"]}><CrearAdminSucursal /></ProtectedRoute>}
+            />
+
+            {/* Vendedores por sucursal */}
+            <Route
+              path="/dashboard/sucursales/:id/vendedores"
+              element={<ProtectedRoute roles={["dueño", "admin"]}><VendedoresPorSucursal /></ProtectedRoute>}
+            />
+
+            {/* Crear vendedor por sucursal */}
+            <Route
+              path="/dashboard/sucursales/:id/crear-vendedor"
+              element={<ProtectedRoute roles={["dueño", "admin"]}><CrearVendedorSucursal /></ProtectedRoute>}
+            />
+            <Route
+              path="/dashboard/sucursales"
+              element={
+                <ProtectedRoute>
+                  <SucursalesDashboard />
+                </ProtectedRoute>
+              }
+            />
+
           </Routes>
         </main>
+
         <Footer />
       </div>
     </BrowserRouter>

@@ -1,107 +1,93 @@
 import React, { useState } from "react";
 import axiosClient from "../api/axiosClient";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("cliente");
-  const [tienda, setTienda] = useState(""); // 🔹 nuevo campo
   const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    console.log("📦 Enviando registro con rol:", role, "y tienda:", tienda);
 
     try {
-      const res = await axiosClient.post("/api/auth/register", {
-        name,
-        email,
-        password,
-        role,
-        tienda, // 🔹 se envía al backend
+      await axiosClient.post("/api/auth/register", {
+        ...form,
+        role: "cliente",        // 🔥 SIEMPRE cliente
+        tienda: null,           // 🔥 No pertenece a tienda
       });
 
-      alert("Registro exitoso ✅");
+      toast.success("Cuenta creada correctamente 🎉");
       navigate("/");
     } catch (error) {
-      console.error("❌ Error al registrar:", error.response?.data || error);
-      alert(error.response?.data?.message || "Error al registrar ❌");
+      toast.error(error.response?.data?.message || "Error al registrarse");
+      console.error(error);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-green-100 to-green-300">
-      <form
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-blue-100 to-blue-300">
+      <motion.form
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
         onSubmit={handleRegister}
-        className="bg-white p-8 rounded-2xl shadow-lg w-96"
+        className="bg-white p-10 rounded-2xl shadow-xl w-[400px]"
       >
-        <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
-          Crear cuenta
+        <h2 className="text-2xl font-bold text-blue-700 mb-6 text-center">
+          Registro de Cliente
         </h2>
 
-        {/* Nombre */}
         <input
-          type="text"
+          name="name"
           placeholder="Nombre completo"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg focus:outline-green-500"
+          className="input w-full mb-3"
+          onChange={handleChange}
           required
         />
 
-        {/* Email */}
         <input
           type="email"
+          name="email"
           placeholder="Correo electrónico"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg focus:outline-green-500"
+          className="input w-full mb-3"
+          onChange={handleChange}
           required
         />
 
-        {/* Password */}
         <input
           type="password"
+          name="password"
           placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg focus:outline-green-500"
+          className="input w-full mb-3"
+          onChange={handleChange}
           required
         />
 
-        {/* Rol */}
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="w-full p-3 mb-4 border rounded-lg focus:outline-green-500"
-        >
-          <option value="cliente">Cliente</option>
-          <option value="vendedor">Vendedor</option>
-          <option value="dueño">Dueño</option>
-        </select>
-
-        {/* Tienda (solo si es dueño o vendedor) */}
-        {(role === "vendedor" || role === "dueño") && (
-          <input
-            type="text"
-            placeholder="Nombre de la tienda o empresa"
-            value={tienda}
-            onChange={(e) => setTienda(e.target.value)}
-            className="w-full p-3 mb-4 border rounded-lg focus:outline-green-500"
-            required
-          />
-        )}
-
-        {/* Botón */}
-        <button
-          type="submit"
-          className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold transition"
-        >
-          Registrarme
+        <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+          Crear cuenta
         </button>
-      </form>
+
+        <p className="mt-4 text-center text-gray-600">
+          ¿Eres dueño?{" "}
+          <Link
+            to="/register-owner"
+            className="text-blue-700 font-semibold hover:underline"
+          >
+            Registra tu tienda aquí
+          </Link>
+        </p>
+      </motion.form>
     </div>
   );
 }

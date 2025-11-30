@@ -3,63 +3,105 @@ import User from "../models/User.js";
 import Tienda from "../models/Tienda.js";
 import bcrypt from "bcryptjs";
 
-// ✅ Registrar un vendedor nuevo (solo para dueños)
-export const registrarVendedor = async (req, res) => {
+// ======================================================
+// CREAR VENDEDOR (dueño o admin)
+// ======================================================
+export const crearVendedor = async (req, res) => {
   try {
-    const { name, email, password, tiendaId } = req.body;
-    const dueñoId = req.user.id;
+    const { nombres, apellidos, dni, telefono, email, password, tienda } = req.body;
 
-    // Verifica que la tienda pertenezca al dueño que está logueado
-    const tienda = await Tienda.findOne({ _id: tiendaId, dueñoId });
-    if (!tienda)
-      return res
-        .status(403)
-        .json({ message: "No puedes registrar vendedores en una tienda que no te pertenece." });
+    const tiendaDB = await Tienda.findById(tienda);
+    if (!tiendaDB) return res.status(404).json({ message: "Tienda no encontrada" });
 
-    // Verifica si el correo ya existe
-    const usuarioExistente = await User.findOne({ email });
-    if (usuarioExistente)
-      return res.status(400).json({ message: "El correo ya está registrado." });
+    if (!["dueño", "admin"].includes(req.user.role)) {
+      return res.status(403).json({ message: "No autorizado" });
+    }
 
-    // Encripta contraseña
+    const existente = await User.findOne({ email });
+    if (existente) return res.status(400).json({ message: "El correo ya está registrado" });
+
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const nuevoVendedor = await User.create({
-      name,
+    
+    const vendedor = await User.create({
+      name: `${nombres} ${apellidos}`,
       email,
       password: hashedPassword,
       role: "vendedor",
-      tiendaId,
+      dni,
+      telefono,
+      tienda,
     });
 
-    res.status(201).json({ success: true, vendedor: nuevoVendedor });
+    tiendaDB.vendedores.push(vendedor._id);
+    await tiendaDB.save();
+
+    res.status(201).json({ message: "Vendedor creado", vendedor });
   } catch (error) {
-    console.error("Error al registrar vendedor:", error);
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ message: "Error al crear vendedor" });
   }
 };
 
-// ✅ Listar vendedores por tienda (solo dueño)
+// ======================================================
+// CREAR ADMIN (solo dueño)
+// ======================================================
+export const crearAdmin = async (req, res) => {
+  try {
+    const { nombres, apellidos, dni, telefono, email, password, tienda } = req.body;
+
+    const tiendaDB = await Tienda.findById(tienda);
+    if (!tiendaDB) return res.status(404).json({ message: "Tienda no encontrada" });
+
+    if (req.user.role !== "dueño") {
+      return res.status(403).json({ message: "No autorizado" });
+    }
+
+    const existente = await User.findOne({ email });
+    if (existente) return res.status(400).json({ message: "El correo ya está registrado" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const admin = await User.create({
+      name: `${nombres} ${apellidos}`,
+      email,
+      password: hashedPassword,
+      role: "admin",
+      dni,
+      telefono,
+      tienda,
+    });
+
+    tiendaDB.administradores.push(admin._id);
+    await tiendaDB.save();
+
+    res.status(201).json({ message: "Administrador creado", admin });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error al crear administrador" });
+  }
+};
+
+// ======================================================
+// LISTAR VENDEDORES POR TIENDA
+// ======================================================
 export const obtenerVendedoresPorTienda = async (req, res) => {
   try {
-    const dueñoId = req.user.id;
-    const { tiendaId } = req.params;
+    const { tienda } = req.params;
 
-    // Verifica que la tienda pertenezca al dueño
-    const tienda = await Tienda.findOne({ _id: tiendaId, dueñoId });
-    if (!tienda)
-      return res.status(403).json({ message: "Acceso denegado." });
+    const tiendaDB = await Tienda.findById(tienda);
+    if (!tiendaDB) return res.status(404).json({ message: "Tienda no encontrada" });
 
-    const vendedores = await User.find({ tiendaId, role: "vendedor" }).select(
-      "-password"
-    );
+    const vendedores = await User.find({
+      tienda,
+      role: "vendedor",
+    }).select("-password");
+
     res.json(vendedores);
   } catch (error) {
     console.error("Error al obtener vendedores:", error);
     res.status(500).json({ message: error.message });
   }
 };
-
 // ✅ Obtener todos los usuarios (uso administrativo)
 export const obtenerUsuarios = async (req, res) => {
   try {

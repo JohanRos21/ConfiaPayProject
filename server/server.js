@@ -8,6 +8,9 @@ import transactionRoutes from "./routes/transactionRoutes.js";
 import validacionRoutes from "./routes/validacionRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import tiendaRoutes from "./routes/tiendasRoutes.js";
+import sucursalesRoutes from "./routes/sucursalesRoutes.js";
+
+console.log("🔥 Server.js cargando rutas…");
 
 dotenv.config();
 const app = express();
@@ -42,12 +45,23 @@ connectDB()
 app.get("/", (req, res) => {
   res.send("ConfiaPay Backend funcionando correctamente 🚀");
 });
-
+console.log("✔ Cargando ruta /api/auth");
 app.use("/api/auth", authRoutes);
+
+console.log("✔ Cargando ruta /api/transactions");
 app.use("/api/transactions", transactionRoutes);
+
+console.log("✔ Cargando ruta /api/validacion");
 app.use("/api/validacion", validacionRoutes);
+
+console.log("✔ Cargando ruta /api/usuarios");
 app.use("/api/usuarios", userRoutes);
+
+console.log("✔ Cargando ruta /api/tiendas");
 app.use("/api/tiendas", tiendaRoutes);
+
+console.log("✔ Cargando ruta /api/sucursales");
+app.use("/api/sucursales", sucursalesRoutes);
 
 // ===== Manejo de Rutas No Encontradas =====
 app.use((req, res) => {

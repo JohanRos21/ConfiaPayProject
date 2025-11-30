@@ -1,16 +1,18 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axiosClient from "../api/axiosClient";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, Mail } from "lucide-react";
 import toast from "react-hot-toast";
+import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  console.log("ENV PRODUCTION:", import.meta.env.VITE_API_URL);
+  // ⬅️ NUEVO: obtenemos login() del AuthContext
+  const { login } = useAuth();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -26,12 +28,12 @@ export default function Login() {
         password,
       });
 
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
+      // ⬅️ NUEVO: Guardamos token + user de forma PRO
+      login(res.data);
 
-      toast.success("Bienvenido a ConfiaPay 💳");
+      toast.success(`Bienvenido a ConfiaPay 💳`);
+
       navigate("/dashboard");
-
     } catch (error) {
       console.error("❌ Error login:", error.response?.data || error);
       toast.error("Credenciales incorrectas ❌");
@@ -95,6 +97,11 @@ export default function Login() {
             Regístrate
           </Link>
         </p>
+        <p>
+          ¿Eres dueño?  
+          <Link to="/register-owner">Registra tu tienda aquí</Link>
+        </p>
+
       </motion.div>
     </div>
   );

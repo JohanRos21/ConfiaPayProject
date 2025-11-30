@@ -18,8 +18,8 @@ export const verificarToken = async (req, res, next) => {
     req.user = {
       id: usuario._id,
       role: usuario.role,
-      tienda: usuario.tienda,
-      tiendaId: usuario.tiendaId || null, // ✅ AGREGAR ESTO
+      tienda: usuario.tienda || null,
+      sucursal: usuario.sucursal || null,
       email: usuario.email,
       name: usuario.name,
     };
@@ -30,4 +30,14 @@ export const verificarToken = async (req, res, next) => {
     res.status(401).json({ message: "Token inválido o expirado" });
   }
 };
+export const isOwner = (req, res, next) => {
+  if (req.user.role !== "dueño")
+    return res.status(403).json({ message: "No autorizado" });
+  next();
+};
 
+export const isOwnerOrAdmin = (req, res, next) => {
+  if (!["dueño", "admin"].includes(req.user.role))
+    return res.status(403).json({ message: "No autorizado" });
+  next();
+};

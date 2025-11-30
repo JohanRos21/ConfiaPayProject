@@ -1,13 +1,18 @@
 import express from "express";
-import { crearTransaccion, obtenerTransacciones } from "../controllers/transactionController.js";
+import { crearTransaccion, obtenerTransacciones, obtenerEstadisticas 
+} from "../controllers/transactionController.js";
 import { verificarToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Registrar una nueva transacción
+// 🔹 Reportes y Estadísticas (NUEVO)
+// Es importante poner esta ruta ANTES de cualquier ruta con "/:id"
+router.get("/reporte/stats", verificarToken, obtenerEstadisticas);
+
+// 🔹 Registrar una nueva transacción
 router.post("/", verificarToken, crearTransaccion);
 
-// Obtener todas las transacciones del usuario autenticado
+// 🔹 Obtener todas las transacciones (Con filtros)
 router.get("/", verificarToken, obtenerTransacciones);
 
-export default router; // 👈 IMPORTANTE
+export default router;

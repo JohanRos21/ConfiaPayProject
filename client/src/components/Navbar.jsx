@@ -33,7 +33,7 @@ export default function Navbar() {
         {/* 🏪 Nueva opción: solo visible para dueños */}
         {role === "dueño" && (
           <li className="hover:text-blue-200 cursor-pointer">
-            <Link to="/tiendas">Mis Tiendas</Link>
+            <Link to="/dashboard/sucursales">Sucursales</Link>
           </li>
         )}
 
